@@ -6,7 +6,7 @@ require "openssl"
 
 class AlphaVantageBenchmark
   def initialize
-    @http = Net::HTTP.new("https://www.alphavantage.co", 443)
+    @http = Net::HTTP.new("www.alphavantage.co", 443)
     @http.use_ssl = true
     @http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
@@ -60,7 +60,7 @@ class AlphaVantageBenchmark
   private
 
   def alphavantage_single_request(symbol)
-    url = "/query?" + URI.encode_www_form(
+    url = "https://www.alphavantage.co/query?" + URI.encode_www_form(
       function: :TIME_SERIES_DAILY,
       outputsize: :compact,
       datatype: :json,
@@ -73,11 +73,11 @@ class AlphaVantageBenchmark
 
   def alphavantage_batch_request(symbols)
     symbols.each_slice(100) do |slice|
-      url = "/query?" + URI.encode_www_form(
+      url = "https://www.alphavantage.co/query?" + URI.encode_www_form(
         function: :BATCH_STOCK_QUOTES,
         datatype: :json,
         apikey: @api_key,
-        symbol: slice.join(','),
+        symbols: slice.join(','),
       )
       @http.get(url)
       @batch_requests += 1
